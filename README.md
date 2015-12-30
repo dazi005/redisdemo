@@ -1,0 +1,2 @@
+# redisdemo
+redis的一个小demo，涉及redisTemplate及redis集群
