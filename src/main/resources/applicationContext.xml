@@ -12,7 +12,7 @@
                 http://www.springframework.org/schema/context 
                 http://www.springframework.org/schema/context/spring-context.xsd">  
       
-	<context:property-placeholder location="classpath:redis.properties" />  
+	<context:property-placeholder location="classpath:redistest.properties" />  
       
 	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">  
 		<property name="maxIdle" value="${redis.maxIdle}" />  
@@ -31,5 +31,5 @@
 		<property name="connectionFactory"   ref="connectionFactory" />  
     </bean>         
           
-	<bean id="userDao" class="com.x.dao.impl.UserDao" />   
+	<bean id="userDao" class="com.funshion.redis.dao.impl.UserDaoImpl" />   
 </beans>  

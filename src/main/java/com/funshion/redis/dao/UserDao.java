@@ -11,14 +11,14 @@ public interface UserDao {
      * @param user 
      * @return 
      */  
-    boolean add(User user);  
+    boolean save(User user);  
       
     /** 
      * 批量新增 使用pipeline方式 
      * @param list 
      * @return 
      */  
-    boolean add(List<User> list);  
+    boolean save(List<User> list);  
       
     /** 
      * 删除 

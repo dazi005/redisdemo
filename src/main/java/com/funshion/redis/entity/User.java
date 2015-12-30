@@ -2,6 +2,10 @@ package com.funshion.redis.entity;
 
 import java.io.Serializable;
 
+import net.sf.json.JSONObject;
+
+import com.funshion.redis.utils.JsonUtils;
+
 public class User implements Serializable{
 	
 	private static final long serialVersionUID = -6011241820070393952L;   
@@ -42,5 +46,21 @@ public class User implements Serializable{
 
     public void setPassword(String password) {  
         this.password = password;  
-    }  
+    } 
+    
+    @Override
+    public String toString(){
+    	return JsonUtils.toJson(this, null);
+    }
+    
+    /**
+     * @author zhangxu
+     * Transfer json String to bean
+     * */
+    static public User toUser(String user){
+    	if(user == null||user == ""){
+    		return null;
+    	}
+    	return (User)JSONObject.toBean(JSONObject.fromObject(user), User.class);
+    }
 }

@@ -21,34 +21,37 @@ public class UserDaoImpl extends AbstractBaseRedisDao<String, User> implements U
      * @param user 
      * @return 
      */  
-    public boolean add(final User user) {  
+    public boolean save(final User user) {  
         boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {  
             public Boolean doInRedis(RedisConnection connection)  
                     throws DataAccessException {  
-                RedisSerializer<String> serializer = getRedisSerializer();  
-                byte[] key  = serializer.serialize(user.getId());  
-                byte[] name = serializer.serialize(user.getName());  
-                return connection.setNX(key, name);  
+            	return connection.setNX(redisTemplate.getStringSerializer().serialize("redisdemo.user.uid."+user.getId()),
+            			redisTemplate.getStringSerializer().serialize(user.toString())); 
             }  
         });  
         return result;  
-    }  
+    }
       
     /** 
      * 批量新增 使用pipeline方式   
      *@param list 
      *@return 
+     * 若list中对象有共性,提取共性做key.无共性的时候只能单个存储
      */  
-    public boolean add(final List<User> list) {  
+    public boolean save(final List<User> list) {  
         Assert.notEmpty(list);  
         boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {  
             public Boolean doInRedis(RedisConnection connection)  
                     throws DataAccessException {  
-                RedisSerializer<String> serializer = getRedisSerializer();  
+            	/**
+            	 *  list 直接转 json
+            	 * */
+/*            	JSONArray usr_lis = JSONArray.fromObject(list);
+            	System.out.println(usr_lis.toString());*/
+            	
                 for (User user : list) {  
-                    byte[] key  = serializer.serialize(user.getId());  
-                    byte[] name = serializer.serialize(user.getName());  
-                    connection.setNX(key, name);  
+                	connection.setNX(redisTemplate.getStringSerializer().serialize("redisdemo.user.uid."+user.getId()),
+                		redisTemplate.getStringSerializer().serialize(user.toString()));
                 }  
                 return true;  
             }  
@@ -99,21 +102,21 @@ public class UserDaoImpl extends AbstractBaseRedisDao<String, User> implements U
   
     /**  
      * 通过key获取 
-     * @param keyId 
+     * @param userId 
      * @return 
      */  
-    public User get(final String keyId) {  
+    public User get(final String userId) {  
         User result = redisTemplate.execute(new RedisCallback<User>() {  
             public User doInRedis(RedisConnection connection)  
                     throws DataAccessException {  
-                RedisSerializer<String> serializer = getRedisSerializer();  
-                byte[] key = serializer.serialize(keyId);  
-                byte[] value = connection.get(key);  
+            	
+            	 byte[] value = connection.get(
+            			 redisTemplate.getStringSerializer().serialize("redisdemo.user.uid."+userId));
+            	 
                 if (value == null) {  
                     return null;  
-                }  
-                String name = serializer.deserialize(value);  
-                return new User(keyId, name, null);  
+                }   
+                return User.toUser(redisTemplate.getStringSerializer().deserialize(value));  
             }  
         });  
         return result;  
