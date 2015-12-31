@@ -44,5 +44,11 @@ public interface UserDao {
      * @param keyId 
      * @return  
      */  
-    User get(String keyId);  
+    User get(String keyId);
+    
+    /** 保存list对象，抽取list中所有对象的共性作为key
+     *  @param list
+     *  @return
+     */
+    boolean saveList(List<User> userlist);
 }  
